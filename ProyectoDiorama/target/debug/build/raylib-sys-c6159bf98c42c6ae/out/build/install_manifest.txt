@@ -1,9 +1,0 @@
-/Users/javiercarredano/Documents/GitHub/Proyecto2Graficas/ProyectoDiorama/target/debug/build/raylib-sys-c6159bf98c42c6ae/out/lib/libraylib.a
-/Users/javiercarredano/Documents/GitHub/Proyecto2Graficas/ProyectoDiorama/target/debug/build/raylib-sys-c6159bf98c42c6ae/out/include/raylib.h
-/Users/javiercarredano/Documents/GitHub/Proyecto2Graficas/ProyectoDiorama/target/debug/build/raylib-sys-c6159bf98c42c6ae/out/include/rlgl.h
-/Users/javiercarredano/Documents/GitHub/Proyecto2Graficas/ProyectoDiorama/target/debug/build/raylib-sys-c6159bf98c42c6ae/out/include/physac.h
-/Users/javiercarredano/Documents/GitHub/Proyecto2Graficas/ProyectoDiorama/target/debug/build/raylib-sys-c6159bf98c42c6ae/out/include/raymath.h
-/Users/javiercarredano/Documents/GitHub/Proyecto2Graficas/ProyectoDiorama/target/debug/build/raylib-sys-c6159bf98c42c6ae/out/include/raudio.h
-/Users/javiercarredano/Documents/GitHub/Proyecto2Graficas/ProyectoDiorama/target/debug/build/raylib-sys-c6159bf98c42c6ae/out/lib/pkgconfig/raylib.pc
-/Users/javiercarredano/Documents/GitHub/Proyecto2Graficas/ProyectoDiorama/target/debug/build/raylib-sys-c6159bf98c42c6ae/out/lib/cmake/raylib/raylib-config-version.cmake
-/Users/javiercarredano/Documents/GitHub/Proyecto2Graficas/ProyectoDiorama/target/debug/build/raylib-sys-c6159bf98c42c6ae/out/lib/cmake/raylib/raylib-config.cmake

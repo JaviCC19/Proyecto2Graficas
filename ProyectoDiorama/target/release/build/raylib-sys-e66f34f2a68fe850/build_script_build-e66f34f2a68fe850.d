@@ -1,9 +1,0 @@
-/Users/javiercarredano/Documents/GitHub/Proyecto2Graficas/ProyectoDiorama/target/release/build/raylib-sys-e66f34f2a68fe850/build_script_build-e66f34f2a68fe850.d: /Users/javiercarredano/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raylib-sys-3.7.0/build.rs /Users/javiercarredano/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raylib-sys-3.7.0/bindings_windows.rs /Users/javiercarredano/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raylib-sys-3.7.0/bindings_linux.rs /Users/javiercarredano/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raylib-sys-3.7.0/bindings_osx.rs /Users/javiercarredano/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raylib-sys-3.7.0/bindings_web.rs
-
-/Users/javiercarredano/Documents/GitHub/Proyecto2Graficas/ProyectoDiorama/target/release/build/raylib-sys-e66f34f2a68fe850/build_script_build-e66f34f2a68fe850: /Users/javiercarredano/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raylib-sys-3.7.0/build.rs /Users/javiercarredano/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raylib-sys-3.7.0/bindings_windows.rs /Users/javiercarredano/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raylib-sys-3.7.0/bindings_linux.rs /Users/javiercarredano/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raylib-sys-3.7.0/bindings_osx.rs /Users/javiercarredano/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raylib-sys-3.7.0/bindings_web.rs
-
-/Users/javiercarredano/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raylib-sys-3.7.0/build.rs:
-/Users/javiercarredano/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raylib-sys-3.7.0/bindings_windows.rs:
-/Users/javiercarredano/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raylib-sys-3.7.0/bindings_linux.rs:
-/Users/javiercarredano/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raylib-sys-3.7.0/bindings_osx.rs:
-/Users/javiercarredano/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raylib-sys-3.7.0/bindings_web.rs:
