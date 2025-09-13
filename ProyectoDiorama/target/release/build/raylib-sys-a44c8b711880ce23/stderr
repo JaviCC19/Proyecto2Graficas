@@ -1,0 +1,148 @@
+CMake Deprecation Warning at CMakeLists.txt:1 (cmake_minimum_required):
+  Compatibility with CMake < 3.5 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value or use a ...<max> suffix to tell
+  CMake that the project does not need compatibility with older versions.
+
+
+CMake Warning (dev) at cmake/LibraryConfigurations.cmake:13 (MESSAGE):
+  OpenGL is deprecated starting with macOS 10.14 (Mojave)!
+Call Stack (most recent call first):
+  src/CMakeLists.txt:56 (include)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning:
+  Manually-specified variables were not used by the project:
+
+    CMAKE_ASM_COMPILER
+    CMAKE_ASM_FLAGS
+
+
+/Users/javiercarredano/Documents/GitHub/Proyecto2Graficas/ProyectoDiorama/target/release/build/raylib-sys-a44c8b711880ce23/out/raylib/src/external/glfw/src/cocoa_monitor.m:48:38: warning: 'kIOMasterPortDefault' is deprecated: first deprecated in macOS 12.0 [-Wdeprecated-declarations]
+    if (IOServiceGetMatchingServices(kIOMasterPortDefault,
+                                     ^~~~~~~~~~~~~~~~~~~~
+                                     kIOMainPortDefault
+/Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/System/Library/Frameworks/IOKit.framework/Headers/IOKitLib.h:133:19: note: 'kIOMasterPortDefault' has been explicitly marked deprecated here
+const mach_port_t kIOMasterPortDefault
+                  ^
+/Users/javiercarredano/Documents/GitHub/Proyecto2Graficas/ProyectoDiorama/target/release/build/raylib-sys-a44c8b711880ce23/out/raylib/src/external/glfw/src/cocoa_monitor.m:246:38: warning: 'kIOMasterPortDefault' is deprecated: first deprecated in macOS 12.0 [-Wdeprecated-declarations]
+    if (IOServiceGetMatchingServices(kIOMasterPortDefault,
+                                     ^~~~~~~~~~~~~~~~~~~~
+                                     kIOMainPortDefault
+/Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/System/Library/Frameworks/IOKit.framework/Headers/IOKitLib.h:133:19: note: 'kIOMasterPortDefault' has been explicitly marked deprecated here
+const mach_port_t kIOMasterPortDefault
+                  ^
+/Users/javiercarredano/Documents/GitHub/Proyecto2Graficas/ProyectoDiorama/target/release/build/raylib-sys-a44c8b711880ce23/out/raylib/src/external/glfw/src/cocoa_window.m:365:62: warning: 'kUTTypeURL' is deprecated: first deprecated in macOS 12.0 - Use UTTypeURL or UTType.url (swift) instead. [-Wdeprecated-declarations]
+        [self registerForDraggedTypes:@[(__bridge NSString*) kUTTypeURL]];
+                                                             ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Headers/UTCoreTypes.h:210:26: note: 'kUTTypeURL' has been explicitly marked deprecated here
+extern const CFStringRef kUTTypeURL                                  API_DEPRECATED("Use UTTypeURL or UTType.url (swift) instead.", ios(3.0, 15.0), macos(10.4, 12.0), tvos(9.0, 15.0), watchos(1.0, 8.0));
+                         ^
+2 warnings generated.
+1 warning generated.
+In file included from /Users/javiercarredano/Documents/GitHub/Proyecto2Graficas/ProyectoDiorama/target/release/build/raylib-sys-a44c8b711880ce23/out/raylib/src/raudio.c:167:
+/Users/javiercarredano/Documents/GitHub/Proyecto2Graficas/ProyectoDiorama/target/release/build/raylib-sys-a44c8b711880ce23/out/raylib/src/external/miniaudio.h:24266:36: warning: 'kAudioObjectPropertyElementMaster' is deprecated: first deprecated in macOS 12.0 [-Wdeprecated-declarations]
+    propAddressDevices.mElement  = kAudioObjectPropertyElementMaster;
+                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                   kAudioObjectPropertyElementMain
+/Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/System/Library/Frameworks/CoreAudio.framework/Headers/AudioHardwareBase.h:208:5: note: 'kAudioObjectPropertyElementMaster' has been explicitly marked deprecated here
+    kAudioObjectPropertyElementMaster API_DEPRECATED_WITH_REPLACEMENT("kAudioObjectPropertyElementMain", macos(10.0, 12.0), ios(2.0, 15.0), watchos(1.0, 8.0), tvos(9.0, 15.0)) = kAudioObjectPropertyElementMain
+    ^
+In file included from /Users/javiercarredano/Documents/GitHub/Proyecto2Graficas/ProyectoDiorama/target/release/build/raylib-sys-a44c8b711880ce23/out/raylib/src/raudio.c:167:
+/Users/javiercarredano/Documents/GitHub/Proyecto2Graficas/ProyectoDiorama/target/release/build/raylib-sys-a44c8b711880ce23/out/raylib/src/external/miniaudio.h:24300:29: warning: 'kAudioObjectPropertyElementMaster' is deprecated: first deprecated in macOS 12.0 [-Wdeprecated-declarations]
+    propAddress.mElement  = kAudioObjectPropertyElementMaster;
+                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                            kAudioObjectPropertyElementMain
+/Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/System/Library/Frameworks/CoreAudio.framework/Headers/AudioHardwareBase.h:208:5: note: 'kAudioObjectPropertyElementMaster' has been explicitly marked deprecated here
+    kAudioObjectPropertyElementMaster API_DEPRECATED_WITH_REPLACEMENT("kAudioObjectPropertyElementMain", macos(10.0, 12.0), ios(2.0, 15.0), watchos(1.0, 8.0), tvos(9.0, 15.0)) = kAudioObjectPropertyElementMain
+    ^
+In file included from /Users/javiercarredano/Documents/GitHub/Proyecto2Graficas/ProyectoDiorama/target/release/build/raylib-sys-a44c8b711880ce23/out/raylib/src/raudio.c:167:
+/Users/javiercarredano/Documents/GitHub/Proyecto2Graficas/ProyectoDiorama/target/release/build/raylib-sys-a44c8b711880ce23/out/raylib/src/external/miniaudio.h:24342:29: warning: 'kAudioObjectPropertyElementMaster' is deprecated: first deprecated in macOS 12.0 [-Wdeprecated-declarations]
+    propAddress.mElement  = kAudioObjectPropertyElementMaster;
+                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                            kAudioObjectPropertyElementMain
+/Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/System/Library/Frameworks/CoreAudio.framework/Headers/AudioHardwareBase.h:208:5: note: 'kAudioObjectPropertyElementMaster' has been explicitly marked deprecated here
+    kAudioObjectPropertyElementMaster API_DEPRECATED_WITH_REPLACEMENT("kAudioObjectPropertyElementMain", macos(10.0, 12.0), ios(2.0, 15.0), watchos(1.0, 8.0), tvos(9.0, 15.0)) = kAudioObjectPropertyElementMain
+    ^
+In file included from /Users/javiercarredano/Documents/GitHub/Proyecto2Graficas/ProyectoDiorama/target/release/build/raylib-sys-a44c8b711880ce23/out/raylib/src/raudio.c:167:
+/Users/javiercarredano/Documents/GitHub/Proyecto2Graficas/ProyectoDiorama/target/release/build/raylib-sys-a44c8b711880ce23/out/raylib/src/external/miniaudio.h:24371:29: warning: 'kAudioObjectPropertyElementMaster' is deprecated: first deprecated in macOS 12.0 [-Wdeprecated-declarations]
+    propAddress.mElement  = kAudioObjectPropertyElementMaster;
+                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                            kAudioObjectPropertyElementMain
+/Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/System/Library/Frameworks/CoreAudio.framework/Headers/AudioHardwareBase.h:208:5: note: 'kAudioObjectPropertyElementMaster' has been explicitly marked deprecated here
+    kAudioObjectPropertyElementMaster API_DEPRECATED_WITH_REPLACEMENT("kAudioObjectPropertyElementMain", macos(10.0, 12.0), ios(2.0, 15.0), watchos(1.0, 8.0), tvos(9.0, 15.0)) = kAudioObjectPropertyElementMain
+    ^
+In file included from /Users/javiercarredano/Documents/GitHub/Proyecto2Graficas/ProyectoDiorama/target/release/build/raylib-sys-a44c8b711880ce23/out/raylib/src/raudio.c:167:
+/Users/javiercarredano/Documents/GitHub/Proyecto2Graficas/ProyectoDiorama/target/release/build/raylib-sys-a44c8b711880ce23/out/raylib/src/external/miniaudio.h:24426:29: warning: 'kAudioObjectPropertyElementMaster' is deprecated: first deprecated in macOS 12.0 [-Wdeprecated-declarations]
+    propAddress.mElement  = kAudioObjectPropertyElementMaster;
+                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                            kAudioObjectPropertyElementMain
+/Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/System/Library/Frameworks/CoreAudio.framework/Headers/AudioHardwareBase.h:208:5: note: 'kAudioObjectPropertyElementMaster' has been explicitly marked deprecated here
+    kAudioObjectPropertyElementMaster API_DEPRECATED_WITH_REPLACEMENT("kAudioObjectPropertyElementMain", macos(10.0, 12.0), ios(2.0, 15.0), watchos(1.0, 8.0), tvos(9.0, 15.0)) = kAudioObjectPropertyElementMain
+    ^
+In file included from /Users/javiercarredano/Documents/GitHub/Proyecto2Graficas/ProyectoDiorama/target/release/build/raylib-sys-a44c8b711880ce23/out/raylib/src/raudio.c:167:
+/Users/javiercarredano/Documents/GitHub/Proyecto2Graficas/ProyectoDiorama/target/release/build/raylib-sys-a44c8b711880ce23/out/raylib/src/external/miniaudio.h:24464:29: warning: 'kAudioObjectPropertyElementMaster' is deprecated: first deprecated in macOS 12.0 [-Wdeprecated-declarations]
+    propAddress.mElement  = kAudioObjectPropertyElementMaster;
+                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                            kAudioObjectPropertyElementMain
+/Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/System/Library/Frameworks/CoreAudio.framework/Headers/AudioHardwareBase.h:208:5: note: 'kAudioObjectPropertyElementMaster' has been explicitly marked deprecated here
+    kAudioObjectPropertyElementMaster API_DEPRECATED_WITH_REPLACEMENT("kAudioObjectPropertyElementMain", macos(10.0, 12.0), ios(2.0, 15.0), watchos(1.0, 8.0), tvos(9.0, 15.0)) = kAudioObjectPropertyElementMain
+    ^
+In file included from /Users/javiercarredano/Documents/GitHub/Proyecto2Graficas/ProyectoDiorama/target/release/build/raylib-sys-a44c8b711880ce23/out/raylib/src/raudio.c:167:
+/Users/javiercarredano/Documents/GitHub/Proyecto2Graficas/ProyectoDiorama/target/release/build/raylib-sys-a44c8b711880ce23/out/raylib/src/external/miniaudio.h:24554:29: warning: 'kAudioObjectPropertyElementMaster' is deprecated: first deprecated in macOS 12.0 [-Wdeprecated-declarations]
+    propAddress.mElement  = kAudioObjectPropertyElementMaster;
+                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                            kAudioObjectPropertyElementMain
+/Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/System/Library/Frameworks/CoreAudio.framework/Headers/AudioHardwareBase.h:208:5: note: 'kAudioObjectPropertyElementMaster' has been explicitly marked deprecated here
+    kAudioObjectPropertyElementMaster API_DEPRECATED_WITH_REPLACEMENT("kAudioObjectPropertyElementMain", macos(10.0, 12.0), ios(2.0, 15.0), watchos(1.0, 8.0), tvos(9.0, 15.0)) = kAudioObjectPropertyElementMain
+    ^
+In file included from /Users/javiercarredano/Documents/GitHub/Proyecto2Graficas/ProyectoDiorama/target/release/build/raylib-sys-a44c8b711880ce23/out/raylib/src/raudio.c:167:
+/Users/javiercarredano/Documents/GitHub/Proyecto2Graficas/ProyectoDiorama/target/release/build/raylib-sys-a44c8b711880ce23/out/raylib/src/external/miniaudio.h:24676:29: warning: 'kAudioObjectPropertyElementMaster' is deprecated: first deprecated in macOS 12.0 [-Wdeprecated-declarations]
+    propAddress.mElement  = kAudioObjectPropertyElementMaster;
+                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                            kAudioObjectPropertyElementMain
+/Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/System/Library/Frameworks/CoreAudio.framework/Headers/AudioHardwareBase.h:208:5: note: 'kAudioObjectPropertyElementMaster' has been explicitly marked deprecated here
+    kAudioObjectPropertyElementMaster API_DEPRECATED_WITH_REPLACEMENT("kAudioObjectPropertyElementMain", macos(10.0, 12.0), ios(2.0, 15.0), watchos(1.0, 8.0), tvos(9.0, 15.0)) = kAudioObjectPropertyElementMain
+    ^
+In file included from /Users/javiercarredano/Documents/GitHub/Proyecto2Graficas/ProyectoDiorama/target/release/build/raylib-sys-a44c8b711880ce23/out/raylib/src/raudio.c:167:
+/Users/javiercarredano/Documents/GitHub/Proyecto2Graficas/ProyectoDiorama/target/release/build/raylib-sys-a44c8b711880ce23/out/raylib/src/external/miniaudio.h:24714:29: warning: 'kAudioObjectPropertyElementMaster' is deprecated: first deprecated in macOS 12.0 [-Wdeprecated-declarations]
+    propAddress.mElement  = kAudioObjectPropertyElementMaster;
+                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                            kAudioObjectPropertyElementMain
+/Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/System/Library/Frameworks/CoreAudio.framework/Headers/AudioHardwareBase.h:208:5: note: 'kAudioObjectPropertyElementMaster' has been explicitly marked deprecated here
+    kAudioObjectPropertyElementMaster API_DEPRECATED_WITH_REPLACEMENT("kAudioObjectPropertyElementMain", macos(10.0, 12.0), ios(2.0, 15.0), watchos(1.0, 8.0), tvos(9.0, 15.0)) = kAudioObjectPropertyElementMain
+    ^
+In file included from /Users/javiercarredano/Documents/GitHub/Proyecto2Graficas/ProyectoDiorama/target/release/build/raylib-sys-a44c8b711880ce23/out/raylib/src/raudio.c:167:
+/Users/javiercarredano/Documents/GitHub/Proyecto2Graficas/ProyectoDiorama/target/release/build/raylib-sys-a44c8b711880ce23/out/raylib/src/external/miniaudio.h:24743:41: warning: 'kAudioObjectPropertyElementMaster' is deprecated: first deprecated in macOS 12.0 [-Wdeprecated-declarations]
+    propAddressDefaultDevice.mElement = kAudioObjectPropertyElementMaster;
+                                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                        kAudioObjectPropertyElementMain
+/Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/System/Library/Frameworks/CoreAudio.framework/Headers/AudioHardwareBase.h:208:5: note: 'kAudioObjectPropertyElementMaster' has been explicitly marked deprecated here
+    kAudioObjectPropertyElementMaster API_DEPRECATED_WITH_REPLACEMENT("kAudioObjectPropertyElementMain", macos(10.0, 12.0), ios(2.0, 15.0), watchos(1.0, 8.0), tvos(9.0, 15.0)) = kAudioObjectPropertyElementMain
+    ^
+In file included from /Users/javiercarredano/Documents/GitHub/Proyecto2Graficas/ProyectoDiorama/target/release/build/raylib-sys-a44c8b711880ce23/out/raylib/src/raudio.c:167:
+/Users/javiercarredano/Documents/GitHub/Proyecto2Graficas/ProyectoDiorama/target/release/build/raylib-sys-a44c8b711880ce23/out/raylib/src/external/miniaudio.h:25829:37: warning: 'kAudioObjectPropertyElementMaster' is deprecated: first deprecated in macOS 12.0 [-Wdeprecated-declarations]
+            propAddress.mElement  = kAudioObjectPropertyElementMaster;
+                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                    kAudioObjectPropertyElementMain
+/Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/System/Library/Frameworks/CoreAudio.framework/Headers/AudioHardwareBase.h:208:5: note: 'kAudioObjectPropertyElementMaster' has been explicitly marked deprecated here
+    kAudioObjectPropertyElementMaster API_DEPRECATED_WITH_REPLACEMENT("kAudioObjectPropertyElementMain", macos(10.0, 12.0), ios(2.0, 15.0), watchos(1.0, 8.0), tvos(9.0, 15.0)) = kAudioObjectPropertyElementMain
+    ^
+In file included from /Users/javiercarredano/Documents/GitHub/Proyecto2Graficas/ProyectoDiorama/target/release/build/raylib-sys-a44c8b711880ce23/out/raylib/src/raudio.c:167:
+/Users/javiercarredano/Documents/GitHub/Proyecto2Graficas/ProyectoDiorama/target/release/build/raylib-sys-a44c8b711880ce23/out/raylib/src/external/miniaudio.h:25858:37: warning: 'kAudioObjectPropertyElementMaster' is deprecated: first deprecated in macOS 12.0 [-Wdeprecated-declarations]
+            propAddress.mElement  = kAudioObjectPropertyElementMaster;
+                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                    kAudioObjectPropertyElementMain
+/Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/System/Library/Frameworks/CoreAudio.framework/Headers/AudioHardwareBase.h:208:5: note: 'kAudioObjectPropertyElementMaster' has been explicitly marked deprecated here
+    kAudioObjectPropertyElementMaster API_DEPRECATED_WITH_REPLACEMENT("kAudioObjectPropertyElementMain", macos(10.0, 12.0), ios(2.0, 15.0), watchos(1.0, 8.0), tvos(9.0, 15.0)) = kAudioObjectPropertyElementMain
+    ^
+In file included from /Users/javiercarredano/Documents/GitHub/Proyecto2Graficas/ProyectoDiorama/target/release/build/raylib-sys-a44c8b711880ce23/out/raylib/src/raudio.c:167:
+/Users/javiercarredano/Documents/GitHub/Proyecto2Graficas/ProyectoDiorama/target/release/build/raylib-sys-a44c8b711880ce23/out/raylib/src/external/miniaudio.h:26304:37: warning: 'kAudioObjectPropertyElementMaster' is deprecated: first deprecated in macOS 12.0 [-Wdeprecated-declarations]
+            propAddress.mElement  = kAudioObjectPropertyElementMaster;
+                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                    kAudioObjectPropertyElementMain
+/Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/System/Library/Frameworks/CoreAudio.framework/Headers/AudioHardwareBase.h:208:5: note: 'kAudioObjectPropertyElementMaster' has been explicitly marked deprecated here
+    kAudioObjectPropertyElementMaster API_DEPRECATED_WITH_REPLACEMENT("kAudioObjectPropertyElementMain", macos(10.0, 12.0), ios(2.0, 15.0), watchos(1.0, 8.0), tvos(9.0, 15.0)) = kAudioObjectPropertyElementMain
+    ^
+13 warnings generated.
