@@ -1,5 +1,6 @@
 use raylib::prelude::*;
 use std::f32::consts::PI;
+use rayon::prelude::*;
 
 mod framebuffers;
 mod ray_intersect;
@@ -7,6 +8,9 @@ mod cube;
 mod camera;
 mod light;
 mod material;
+mod textures;
+mod color_ops;
+mod texture_manager;
 
 use framebuffers::Framebuffer;
 use ray_intersect::{Intersect, RayIntersect};
@@ -19,11 +23,11 @@ const ORIGIN_BIAS: f32 = 1e-4;
 
 fn procedural_sky(dir: Vector3) -> Vector3 {
     let d = dir.normalized();
-    let t = (d.y + 1.0) * 0.5; // map y [-1,1] → [0,1]
+    let t = (d.y + 1.0) * 0.5;
 
-    let green = Vector3::new(0.1, 0.6, 0.2); // grass green
-    let white = Vector3::new(1.0, 1.0, 1.0); // horizon haze
-    let blue = Vector3::new(0.3, 0.5, 1.0);  // sky blue
+    let green = Vector3::new(0.1, 0.6, 0.2);
+    let white = Vector3::new(1.0, 1.0, 1.0);
+    let blue = Vector3::new(0.3, 0.5, 1.0);
 
     if t < 0.54 {
         let k = t / 0.55;
@@ -88,7 +92,7 @@ fn cast_shadow(
     for object in objects {
         let shadow_intersect = object.ray_intersect(&shadow_ray_origin, &light_dir);
         if shadow_intersect.is_intersecting && shadow_intersect.distance < light_distance {
-            return 1.0; // full shadow
+            return 1.0;
         }
     }
 
@@ -100,6 +104,7 @@ pub fn cast_ray(
     ray_direction: &Vector3,
     objects: &[&dyn RayIntersect],
     light: &Light,
+    tm: &texture_manager::TextureManager,   // <-- ahora recibe TextureManager
     depth: u32,
 ) -> Vector3 {
     if depth > 3 {
@@ -129,7 +134,18 @@ pub fn cast_ray(
     let light_intensity = light.intensity * (1.0 - shadow_intensity);
 
     let diffuse_intensity = intersect.normal.dot(light_dir).max(0.0) * light_intensity;
-    let diffuse = intersect.material.diffuse * diffuse_intensity;
+
+    // ---- USAR TEXTURA (si existe) en lugar del color diffuse fijo ----
+    let tex_color = intersect
+        .material
+        .color_at(tm, intersect.u, intersect.v); // devuelve raylib::Color
+    let tex_v3 = Vector3::new(
+        tex_color.r as f32 / 255.0,
+        tex_color.g as f32 / 255.0,
+        tex_color.b as f32 / 255.0,
+    );
+    let diffuse = tex_v3 * diffuse_intensity;
+    // ------------------------------------------------------------------
 
     let specular_intensity =
         view_dir.dot(reflect_dir).max(0.0).powf(intersect.material.specular) * light_intensity;
@@ -143,28 +159,29 @@ pub fn cast_ray(
     let albedo = intersect.material.albedo;
     let phong_color = diffuse * albedo[0] + specular * albedo[1];
 
-    // Reflections
     let reflectivity = intersect.material.albedo[2];
     let reflect_color = if reflectivity > 0.0 {
         let reflect_dir = reflect(ray_direction, &intersect.normal).normalized();
         let reflect_origin = offset_origin(&intersect, &reflect_dir);
-        cast_ray(&reflect_origin, &reflect_dir, objects, light, depth + 1)
+        // <-- pasar `tm` en la llamada recursiva
+        cast_ray(&reflect_origin, &reflect_dir, objects, light, tm, depth + 1)
     } else {
         Vector3::zero()
     };
 
-    // Refractions
     let transparency = intersect.material.albedo[3];
     let refract_color = if transparency > 0.0 {
         if let Some(refract_dir) =
             refract(ray_direction, &intersect.normal, intersect.material.refractive_index)
         {
             let refract_origin = offset_origin(&intersect, &refract_dir);
-            cast_ray(&refract_origin, &refract_dir, objects, light, depth + 1)
+            // <-- pasar `tm` en la llamada recursiva
+            cast_ray(&refract_origin, &refract_dir, objects, light, tm, depth + 1)
         } else {
             let reflect_dir = reflect(ray_direction, &intersect.normal).normalized();
             let reflect_origin = offset_origin(&intersect, &reflect_dir);
-            cast_ray(&reflect_origin, &reflect_dir, objects, light, depth + 1)
+            // <-- pasar `tm` en la llamada recursiva
+            cast_ray(&reflect_origin, &reflect_dir, objects, light, tm, depth + 1)
         }
     } else {
         Vector3::zero()
@@ -180,17 +197,26 @@ pub fn render(
     objects: &[&dyn RayIntersect],
     camera: &Camera,
     light: &Light,
+    tm: &texture_manager::TextureManager,   // <-- recibe TextureManager
 ) {
-    let width = framebuffer.width as f32;
-    let height = framebuffer.height as f32;
-    let aspect_ratio = width / height;
+    let width_f = framebuffer.width as f32;
+    let height_f = framebuffer.height as f32;
+    let aspect_ratio = width_f / height_f;
     let fov = PI / 3.0;
     let perspective_scale = (fov * 0.5).tan();
 
-    for y in 0..framebuffer.height {
-        for x in 0..framebuffer.width {
-            let screen_x = (2.0 * x as f32) / width - 1.0;
-            let screen_y = -(2.0 * y as f32) / height + 1.0;
+    let width = framebuffer.width as usize;
+    let height = framebuffer.height as usize;
+    let total = width * height;
+
+    let pixels: Vec<(usize, Color)> = (0..total)
+        .into_par_iter()
+        .map(|idx| {
+            let x = idx % width;
+            let y = idx / width;
+
+            let screen_x = (2.0 * x as f32) / width_f - 1.0;
+            let screen_y = -(2.0 * y as f32) / height_f + 1.0;
 
             let screen_x = screen_x * aspect_ratio * perspective_scale;
             let screen_y = screen_y * perspective_scale;
@@ -198,12 +224,19 @@ pub fn render(
             let ray_direction = Vector3::new(screen_x, screen_y, -1.0).normalized();
             let rotated_direction = camera.basis_change(&ray_direction);
 
-            let pixel_color_v3 = cast_ray(&camera.eye, &rotated_direction, objects, light, 0);
+            // <-- pasar `tm` al cast_ray
+            let pixel_color_v3 = cast_ray(&camera.eye, &rotated_direction, objects, light, tm, 0);
             let pixel_color = vector3_to_color(pixel_color_v3);
 
-            framebuffer.set_current_color(pixel_color);
-            framebuffer.set_pixel(x, y);
-        }
+            (idx, pixel_color)
+        })
+        .collect();
+
+    for (idx, pixel_color) in pixels {
+        let x = (idx % width) as u32;
+        let y = (idx / width) as u32;
+        framebuffer.set_current_color(pixel_color);
+        framebuffer.set_pixel(x, y);
     }
 }
 
@@ -213,68 +246,358 @@ fn main() {
 
     let (mut window, thread) = raylib::init()
         .size(window_width, window_height)
-        .title("Raytracer Example with Cubes")
+        .title("Pokeball Diorama - Capas")
         .build();
     raylib::set_trace_log(TraceLogLevel::LOG_WARNING);
 
     let mut framebuffer = Framebuffer::new(window_width as u32, window_height as u32);
 
-    // Materials
-    let rubber = Material::new(
-        Vector3::new(0.3, 0.1, 0.1),
-        10.0,
-        [0.9, 0.1, 0.0, 0.0],
-        0.0,
-    );
+    // --- Texturas ---
+    let mut texture_manager = texture_manager::TextureManager::default();
+    let black_texture = textures::Texture::load("./assets/wool_colored_black.png");
+    let white_texture = textures::Texture::load("./assets/wool_colored_white.png");
+    let red_texture   = textures::Texture::load("./assets/wool_colored_red.png");
+    let yellow_texture= textures::Texture::load("./assets/wool_colored_yellow.png");
 
-    let ivory = Material::new(
-        Vector3::new(0.4, 0.4, 0.3),
-        50.0,
-        [0.6, 0.3, 0.1, 0.0],
-        0.0,
-    );
+    texture_manager.add_texture('b', black_texture);
+    texture_manager.add_texture('w', white_texture);
+    texture_manager.add_texture('r', red_texture);
+    texture_manager.add_texture('y', yellow_texture);
 
-    let glass = Material::new(
-        Vector3::new(0.6, 0.7, 0.8),
-        125.0,
-        [0.0, 0.5, 0.1, 0.8],
-        1.5,
-    );
+    // --- Materiales ---
+    let mat_black = Material::with_texture(Vector3::new(0.5, 0.5, 0.5), 10.0, [0.9, 0.1, 0.0, 0.0], 0.0, 'b');
+    let mat_white = Material::with_texture(Vector3::new(0.5, 0.5, 0.5), 10.0, [0.9, 0.1, 0.0, 0.0], 0.0, 'w');
+    let mat_red   = Material::with_texture(Vector3::new(0.5, 0.5, 0.5), 10.0, [0.9, 0.1, 0.0, 0.0], 0.0, 'r');
+    let mat_yellow= Material::with_texture(Vector3::new(0.5, 0.5, 0.5), 10.0, [0.9, 0.1, 0.0, 0.0], 0.0, 'y');
 
-    // Cubes instead of spheres
-    let cube1 = Cube {
-        center: Vector3::new(0.0, 0.0, 0.0),
-        size: 1.0,
-        material: rubber,
-    };
+    // --- Función para convertir símbolo a material ---
+    fn get_material(c: char, mat_white: &Material, mat_black: &Material, mat_red: &Material, mat_yellow: &Material) -> Option<Material> {
+        match c {
+            'W' | 'w' => Some(mat_white.clone()),
+            'N' | 'n' => Some(mat_black.clone()),
+            'R' | 'r' => Some(mat_red.clone()),
+            'Y' | 'y' => Some(mat_yellow.clone()),
+            _ => None,
+        }
+    }
 
-    let cube2 = Cube {
-        center: Vector3::new(-1.5, -1.0, 2.0),
-        size: 0.8,
-        material: ivory,
-    };
+    // --- Definición de capas (ejemplo reducido con tus matrices 1–13) ---
+    // Cada capa es un Vec<&str> de 10 columnas
+    let layers: Vec<Vec<&str>> = vec![
+        // Layer 1
+        vec![
+            "0000000000",
+            "0000000000",
+            "0000000000",
+            "0000WW0000",
+            "0000WW0000",
+            "0000000000",
+            "0000000000",
+            "0000000000",
+            "0000000000",
+            "0000000000",
+        ],
+        // Layer 2
+        vec![
+            "0000000000",
+            "0000000000",
+            "0000WWWW00",
+            "000W00W000",
+            "000W00W000",
+            "0000WWWW00",
+            "0000000000",
+            "0000000000",
+            "0000000000",
+            "0000000000",
+        ],
+        // Layer 3  (interpreted from tu matrix con w/o)
+        vec![
+            "0000000000",
+            "0000000000",
+            "00WWWWWW00",
+            "00WOOOOOW0",
+            "00WOOOOOW0",
+            "00WOOOOOW0",
+            "00WOOOOOW0",
+            "00WWWWWW00",
+            "0000000000",
+            "0000000000",
+        ],
+        // Layer 4 (borde W)
+        vec![
+            "0000000000",
+            "0WWWWWWWW0",
+            "0W0000000W",
+            "0W0000000W",
+            "0W0000000W",
+            "0W0000000W",
+            "0W0000000W",
+            "0W0000000W",
+            "0W0000000W",
+            "0000000000",
+        ],
+        // Layer 5 (negra alrededor, N en interior)
+        vec![
+            "WWWWWWWWWW",
+            "WNNNNNNNNW",
+            "WNNNNNNNNW",
+            "0NNNNNNNNW",
+            "0NNNNNNNNW",
+            "0NNNNNNNNW",
+            "0NNNNNNNNW",
+            "WNNNNNNNNW",
+            "WNNNNNNNNW",
+            "WWWWWWWWWW",
+        ],
+        // Pikachu - Layer 6 (piernas delanteras)
+    vec![
+        "0000000000",
+        "0000000000",
+        "000000Y0Y0",
+        "0000000000",
+        "000000Y0Y0",
+        "0000000000",
+        "0000000000",
+        "0000000000",
+        "0000000000",
+        "0000000000",
+    ],
 
-    let cube3 = Cube {
-        center: Vector3::new(1.0, 0.5, 2.5),
-        size: 0.5,
-        material: glass,
-    };
+    // Pikachu - Layer 7 (piernas traseras)
+    vec![
+        "0000000000",
+        "0000000000",
+        "000000Y0Y0",
+        "0000000000",
+        "000000Y0Y0",
+        "0000000000",
+        "0000000000",
+        "0000000000",
+        "0000000000",
+        "0000000000",
+    ],
 
-    // Collect them as trait objects
-    let objects: Vec<&dyn RayIntersect> = vec![&cube1, &cube2, &cube3];
+    // Pikachu - Layer 8 (cuerpo central con base cola)
+    vec![
+        "0000000000",
+        "0000000000",
+        "000RYYYYY0",
+        "000NYYYYY0",
+        "000RYYYYY0",
+        "0000000000",
+        "0000000000",
+        "0000000000",
+        "0000000000",
+        "0000000000",
+    ],
 
+    // Pikachu - Layer 9 (cabeza con mejillas rojas)
+    vec![
+        "0000000000",
+        "0000000000",
+        "000YYYYYY0",
+        "000YYYYYY",
+        "000YYYYYY0",
+        "0000000000",
+        "0000000000",
+        "0000000000",
+        "0000000000",
+        "0000000000",
+    ],
+
+    // Pikachu - Layer 10 (cabeza + fin del cuerpo + cola negra)
+    vec![
+        "0000000000",
+        "0000000000",
+        "000NYY0000",
+        "000YYY000Y",
+        "000NYY0000",
+        "0000000000",
+        "0000000000",
+        "0000000000",
+        "0000000000",
+        "0000000000",
+    ],
+
+    // Pikachu - Layer 11 (ojos negros)
+    vec![
+        "0000000000",
+        "0000000000",
+        "000YYY0000",
+        "000YYY000N",
+        "000YYY0000",
+        "0000000000",
+        "0000000000",
+        "0000000000",
+        "0000000000",
+        "0000000000",
+    ],
+
+    // Pikachu - Layer 12 (antenas en la cabeza)
+    vec![
+        "0000000000",
+        "0000000000",
+        "00000Y0000",
+        "0000000000",
+        "00000Y0000",
+        "0000000000",
+        "0000000000",
+        "0000000000",
+        "0000000000",
+        "0000000000",
+    ],
+    // Pikachu - Layer 13 (antenas en la cabeza)
+    vec![
+        "0000000000",
+        "0000000000",
+        "00000N0000",
+        "0000000000",
+        "00000N0000",
+        "0000000000",
+        "0000000000",
+        "0000000000",
+        "0000000000",
+        "0000000000",
+    ],
+
+    // --- Pokeball superior ---
+    // Layer 2 (vacía, para elevar)
+    vec![
+        "0000000000",
+        "0000000000",
+        "N000000000",
+        "N000000000",
+        "N000000000",
+        "N000000000",
+        "N000000000",
+        "N000000000",
+        "0000000000",
+        "0000000000",
+    ],
+
+    vec![
+        "0000000000",
+        "0000000000",
+        "N000000000",
+        "W000000000",
+        "W000000000",
+        "W000000000",
+        "W000000000",
+        "N000000000",
+        "0000000000",
+        "0000000000",
+    ],
+
+    // Layer 3 (capa exterior superior)
+    vec![
+        "NNNNNNNNNN",
+        "N00000000N",
+        "N00000000N",
+        "W00000000N",
+        "W00000000N",
+        "W00000000N",
+        "W00000000N",
+        "N00000000N",
+        "N00000000N",
+        "NNNNNNNNNN",
+    ],
+
+    // Layer 4
+    vec![
+        "0000000000",
+        "0RRRRRRRR0",
+        "N00000000R",
+        "W00000000R",
+        "W00000000R",
+        "W00000000R",
+        "W00000000R",
+        "N00000000R",
+        "0RRRRRRRR0",
+        "0000000000",
+    ],
+
+    // Layer 5
+    vec![
+        "0000000000",
+        "0000000000",
+        "N0RRRRRR00",
+        "NR000000R0",
+        "NR000000R0",
+        "NR000000R0",
+        "NR000000R0",
+        "N0RRRRRR00",
+        "0000000000",
+        "0000000000",
+    ],
+
+    // Layer 6
+    vec![
+        "0000000000",
+        "0000000000",
+        "0000000000",
+        "0000RRRR000",
+        "000RR00R000",
+        "000RR00R000",
+        "0000RRRR000",
+        "0000000000",
+        "0000000000",
+        "0000000000",
+    ],
+
+    // Layer 7
+    vec![
+        "0000000000",
+        "0000000000",
+        "0000000000",
+        "0000000000",
+        "0000RR0000",
+        "0000RR0000",
+        "0000000000",
+        "0000000000",
+        "0000000000",
+        "0000000000",
+    ],
+
+
+
+    ];
+
+    // --- Construcción de cubos ---
+    let mut cubes: Vec<Cube> = Vec::new();
+
+    for (layer_index, layer) in layers.iter().enumerate() {
+        let y = layer_index as f32; // altura según índice
+        for (z, row) in layer.iter().enumerate() {
+            for (x, c) in row.chars().enumerate() {
+                if let Some(mat) = get_material(c, &mat_white, &mat_black, &mat_red, &mat_yellow) {
+                    cubes.push(Cube {
+                        center: Vector3::new(x as f32, y, z as f32),
+                        size: 1.0,
+                        material: mat,
+                    });
+                }
+            }
+        }
+    }
+
+    let objects: Vec<&dyn RayIntersect> = cubes.iter().map(|c| c as &dyn RayIntersect).collect();
+
+    // --- Cámara ---
     let mut camera = Camera::new(
-        Vector3::new(0.0, 0.0, 5.0),
-        Vector3::new(0.0, 0.0, 0.0),
+        Vector3::new(0.0, 15.0, 30.0),
+        Vector3::new(5.0, 5.0, 5.0),
         Vector3::new(0.0, 1.0, 0.0),
     );
     let rotation_speed = PI / 100.0;
 
-    let light = Light::new(
-        Vector3::new(1.0, -1.0, 5.0),
+    // --- Luz ---
+
+        let light2 = Light::new(
+        Vector3::new(-20.0, 20.0, 15.0), // un poco más arriba y adelante
         Color::new(255, 255, 255, 255),
-        1.5,
+        3.0, // más intensidad
     );
+
 
     while !window.window_should_close() {
         if window.is_key_down(KeyboardKey::KEY_LEFT) {
@@ -290,8 +613,15 @@ fn main() {
             camera.orbit(0.0, rotation_speed);
         }
 
+        if window.is_key_down(KeyboardKey::KEY_EQUAL) {
+            camera.zoom(0.95);
+        }
+        if window.is_key_down(KeyboardKey::KEY_MINUS) {
+            camera.zoom(1.05);
+        }
+
         framebuffer.clear();
-        render(&mut framebuffer, &objects, &camera, &light);
+        render(&mut framebuffer, &objects, &camera, &light2, &texture_manager);
         framebuffer.swap_buffers(&mut window, &thread);
     }
 }
