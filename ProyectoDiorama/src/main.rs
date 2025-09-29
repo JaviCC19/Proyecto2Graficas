@@ -258,28 +258,84 @@ fn main() {
     let white_texture = textures::Texture::load("./assets/wool_colored_white.png");
     let red_texture   = textures::Texture::load("./assets/wool_colored_red.png");
     let yellow_texture= textures::Texture::load("./assets/wool_colored_yellow.png");
+    let blackstone_texture = textures::Texture::load("./assets/blackstone_top.png");
+    let glowstone_texture = textures::Texture::load("./assets/glowstone.png");
+    let quartz_texture = textures::Texture::load("./assets/quartz_block_top.png");
+    let redstone_texture = textures::Texture::load("./assets/redstone_block.png");
 
-    texture_manager.add_texture('b', black_texture);
+    texture_manager.add_texture('n', black_texture);
     texture_manager.add_texture('w', white_texture);
     texture_manager.add_texture('r', red_texture);
     texture_manager.add_texture('y', yellow_texture);
+    texture_manager.add_texture('B', blackstone_texture);
+    texture_manager.add_texture('G', glowstone_texture);
+    texture_manager.add_texture('Q', quartz_texture);
+    texture_manager.add_texture('S', redstone_texture);
+
 
     // --- Materiales ---
-    let mat_black = Material::with_texture(Vector3::new(0.5, 0.5, 0.5), 10.0, [0.9, 0.1, 0.0, 0.0], 0.0, 'b');
+    let mat_black = Material::with_texture(Vector3::new(0.5, 0.5, 0.5), 10.0, [0.9, 0.1, 0.0, 0.0], 0.0, 'n');
     let mat_white = Material::with_texture(Vector3::new(0.5, 0.5, 0.5), 10.0, [0.9, 0.1, 0.0, 0.0], 0.0, 'w');
     let mat_red   = Material::with_texture(Vector3::new(0.5, 0.5, 0.5), 10.0, [0.9, 0.1, 0.0, 0.0], 0.0, 'r');
     let mat_yellow= Material::with_texture(Vector3::new(0.5, 0.5, 0.5), 10.0, [0.9, 0.1, 0.0, 0.0], 0.0, 'y');
+    // --- Materiales nuevos ---
+    let mat_blackstone = Material::with_texture(
+        Vector3::new(0.0, 0.0, 0.0), // negro completo
+        25.0,                        // rugosidad
+        [0.0, 0.0, 0.0, 0.0],        // sin especular, sin emisión
+        0.0,                         // reflectividad
+        'B'                           // símbolo
+    );
 
-    // --- Función para convertir símbolo a material ---
-    fn get_material(c: char, mat_white: &Material, mat_black: &Material, mat_red: &Material, mat_yellow: &Material) -> Option<Material> {
-        match c {
-            'W' | 'w' => Some(mat_white.clone()),
-            'N' | 'n' => Some(mat_black.clone()),
-            'R' | 'r' => Some(mat_red.clone()),
-            'Y' | 'y' => Some(mat_yellow.clone()),
-            _ => None,
-        }
+    let mat_glowstone = Material::with_texture(
+    Vector3::new(1.0, 0.85, 0.4), // tono dorado-amarillo
+    5.0,                          // un poco de rugosidad (no espejo)
+    [0.8, 0.1, 0.1, 1.5],         // fuerte difusión, poca reflexión, algo especular, emisión fuerte
+    0.0,                          // no refracta
+    'G'                           // símbolo
+);
+
+
+    let mat_quartz = Material::with_texture(
+        Vector3::new(1.0, 1.0, 1.0), // blanco puro
+        50.0,                         
+        [0.9, 0.9, 0.9, 0.0],        // especular alta para reflejar
+        0.3,                          // completamente reflectivo
+        'Q'                           // símbolo
+    );
+
+    let mat_redstone = Material::with_texture(
+        Vector3::new(0.8, 0.0, 0.0), // rojo oscuro
+        25.0,                         
+        [0.5, 0.0, 0.0, 0.0],        
+        0.2,                    
+        'S'                             
+    );
+
+
+    fn get_material(
+    c: char,
+    mat_white: &Material,
+    mat_black: &Material,
+    mat_red: &Material,
+    mat_yellow: &Material,
+    mat_blackstone: &Material,
+    mat_glowstone: &Material,
+    mat_quartz: &Material,
+    mat_redstone: &Material
+) -> Option<Material> {
+    match c {
+        'W' | 'w' => Some(mat_white.clone()),
+        'N' | 'n' => Some(mat_black.clone()),
+        'R' | 'r' => Some(mat_red.clone()),
+        'Y' | 'y' => Some(mat_yellow.clone()),
+        'B' | 'b' => Some(mat_blackstone.clone()),
+        'G' | 'g' => Some(mat_glowstone.clone()),
+        'Q' | 'q' => Some(mat_quartz.clone()),
+        'S' | 's' => Some(mat_redstone.clone()),
+        _ => None,
     }
+}
 
     // --- Definición de capas (ejemplo reducido con tus matrices 1–13) ---
     // Cada capa es un Vec<&str> de 10 columnas
@@ -339,14 +395,14 @@ fn main() {
         // Layer 5 (negra alrededor, N en interior)
         vec![
             "WWWWWWWWWW",
-            "WNNNNNNNNW",
-            "WNNNNNNNNW",
-            "0NNNNNNNNW",
-            "0NNNNNNNNW",
-            "0NNNNNNNNW",
-            "0NNNNNNNNW",
-            "WNNNNNNNNW",
-            "WNNNNNNNNW",
+            "WGGGGGGGGW",
+            "WGGGGGGGGW",
+            "0GGGGGGGGGW",
+            "0GGGGGGGGW",
+            "0GGGGGGGGW",
+            "0GGGGGGGGW",
+            "WGGGGGGGGW",
+            "WGGGGGGGGW",
             "WWWWWWWWWW",
         ],
         // Pikachu - Layer 6 (piernas delanteras)
@@ -381,9 +437,9 @@ fn main() {
     vec![
         "0000000000",
         "0000000000",
-        "000RYYYYY0",
+        "000SYYYYY0",
         "000NYYYYY0",
-        "000RYYYYY0",
+        "000SYYYYY0",
         "0000000000",
         "0000000000",
         "0000000000",
@@ -465,12 +521,12 @@ fn main() {
     vec![
         "0000000000",
         "0000000000",
-        "N000000000",
-        "N000000000",
-        "N000000000",
-        "N000000000",
-        "N000000000",
-        "N000000000",
+        "B000000000",
+        "B000000000",
+        "B000000000",
+        "B000000000",
+        "B000000000",
+        "B000000000",
         "0000000000",
         "0000000000",
     ],
@@ -478,40 +534,40 @@ fn main() {
     vec![
         "0000000000",
         "0000000000",
-        "N000000000",
-        "W000000000",
-        "W000000000",
-        "W000000000",
-        "W000000000",
-        "N000000000",
+        "B000000000",
+        "Q000000000",
+        "Q000000000",
+        "Q000000000",
+        "Q000000000",
+        "B000000000",
         "0000000000",
         "0000000000",
     ],
 
     // Layer 3 (capa exterior superior)
     vec![
-        "NNNNNNNNNN",
-        "N00000000N",
-        "N00000000N",
-        "W00000000N",
-        "W00000000N",
-        "W00000000N",
-        "W00000000N",
-        "N00000000N",
-        "N00000000N",
-        "NNNNNNNNNN",
+        "BBBBBBBBBB",
+        "B00000000B",
+        "B00000000B",
+        "Q00000000B",
+        "Q00000000B",
+        "Q00000000B",
+        "Q00000000B",
+        "B00000000B",
+        "B00000000B",
+        "BBBBBBBBBB",
     ],
 
     // Layer 4
     vec![
         "0000000000",
         "0RRRRRRRR0",
-        "N00000000R",
-        "W00000000R",
-        "W00000000R",
-        "W00000000R",
-        "W00000000R",
-        "N00000000R",
+        "B00000000R",
+        "Q00000000R",
+        "Q00000000R",
+        "Q00000000R",
+        "Q00000000R",
+        "B00000000R",
         "0RRRRRRRR0",
         "0000000000",
     ],
@@ -520,12 +576,12 @@ fn main() {
     vec![
         "0000000000",
         "0000000000",
-        "N0RRRRRR00",
-        "NR000000R0",
-        "NR000000R0",
-        "NR000000R0",
-        "NR000000R0",
-        "N0RRRRRR00",
+        "B0RRRRRR00",
+        "BR000000R0",
+        "BR000000R0",
+        "BR000000R0",
+        "BR000000R0",
+        "B0RRRRRR00",
         "0000000000",
         "0000000000",
     ],
@@ -569,7 +625,7 @@ fn main() {
         let y = layer_index as f32; // altura según índice
         for (z, row) in layer.iter().enumerate() {
             for (x, c) in row.chars().enumerate() {
-                if let Some(mat) = get_material(c, &mat_white, &mat_black, &mat_red, &mat_yellow) {
+                if let Some(mat) = get_material(c, &mat_white, &mat_black, &mat_red, &mat_yellow, &mat_blackstone, &mat_glowstone, &mat_quartz, &mat_redstone) {
                     cubes.push(Cube {
                         center: Vector3::new(x as f32, y, z as f32),
                         size: 1.0,
